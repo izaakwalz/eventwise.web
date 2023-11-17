@@ -1,0 +1,14 @@
+.next
+.cache
+public
+.github/**
+.vercel/**
+.husky/**
+node_modules
+.history/**
+.history
+next-env.d.ts
+next.config.ts
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
