@@ -15,7 +15,7 @@ const navLink = [
 
   {
     title: 'Claims',
-    link: 'claims'
+    link: '/claims'
   }
 ];
 
