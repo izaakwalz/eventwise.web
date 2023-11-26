@@ -14,15 +14,21 @@ import { TextField } from '../ui/input';
 
 export default function RequestClaim() {
   return (
+    <div className="flex h-[228px] w-[190px] flex-col items-center  justify-center gap-[29px] rounded-lg border border-black px-6 py-[28px]">
+      <Image src={requestClaimImage} alt="" width={113} height={119} />
+
+      <RequestClaimModal />
+    </div>
+  );
+}
+
+const RequestClaimModal = () => {
+  return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="flex h-[228px] w-[190px] flex-col items-center  justify-center gap-[29px] rounded-lg border border-black bg-[#EAEAEA] px-6 py-[28px]">
-          <Image src={requestClaimImage} alt="" width={113} height={119} />
-
-          <button className="inline-flex w-full items-center justify-center gap-2.5 rounded-3xl bg-[#E69FBD] p-2 text-[14px]/[20px] font-medium text-white">
-            Request claim
-          </button>
-        </div>
+        <button className="shadow-button inline-flex items-center justify-center gap-2 rounded-[32px] border border-[#353A5A] bg-[#E69FBD] p-2 text-[14px]/[20px] font-medium text-white">
+          Request claim
+        </button>
       </DialogTrigger>
       <DialogContent className="w-full bg-[#D8E2F7] px-[30px] py-[42px] lg:max-w-[620px]">
         <DialogHeader>
@@ -51,4 +57,4 @@ export default function RequestClaim() {
       </DialogContent>
     </Dialog>
   );
-}
+};
