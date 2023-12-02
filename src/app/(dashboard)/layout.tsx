@@ -1,13 +1,15 @@
+'use client';
 import { addEventImage, payPremiumImage, requestClaimImage } from '@/config/image';
 import DashboardNav from '@/components/dashboard/dashboard-nav';
 import Image from 'next/image';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import AddEvent from '@/components/dashboard/add-event';
 import RequestClaim from '@/components/dashboard/request-claim';
 import PayPremium from '@/components/dashboard/pay-premium';
 import ContractProvider from '@/hooks/connect-wallet';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {}, []);
   return (
     <ContractProvider>
       <section className="flex items-center gap-[18px] py-[100px]">

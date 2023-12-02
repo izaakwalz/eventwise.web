@@ -17,14 +17,12 @@ export interface IAccount {
   address: string;
   provider: any;
   isNetwork: boolean;
-  policy: any;
   isAuthenticated: boolean;
 }
 
 const initialState: IAccount = {
   address: '',
   provider: null,
-  policy: null,
   isNetwork: false,
   isAuthenticated: false
 };
@@ -62,28 +60,26 @@ export default function ContractProvider({ children }: ContractProps) {
       const address = await getAddress();
       const userChainID = await getChainID();
 
-      const policy = await new EventWise(provider, address).viewPolicy(address);
+      // const policy = await new EventWise(provider, address).viewPolicy();
 
       if (userChainID !== ChainId) {
         setAccount({
           ...initialState,
           address,
-          policy,
           isAuthenticated: true,
           isNetwork: false
         });
       }
 
-      if (userChainID === ChainId && policy?.isExists === false) {
-        router.push('/register');
-      }
+      // if (userChainID === ChainId) {
+      //   router.push('/register');
+      // }
 
       setAccount({
         ...initialState,
         address,
         provider,
         isNetwork: true,
-        policy,
         isAuthenticated: true
       });
     } catch (error: any) {
