@@ -1,3 +1,6 @@
+'use client';
+
+import Web3 from 'web3';
 import {
   Dialog,
   DialogClose,
@@ -11,6 +14,10 @@ import {
 import { addEventImage } from '@/config/image';
 import Image from 'next/image';
 import { TextField } from '../ui/input';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import EventWise from '@/lib/EventWise';
+import { useContractContext } from '@/hooks/connect-wallet';
 
 export default function AddEvent() {
   return (
@@ -22,11 +29,54 @@ export default function AddEvent() {
   );
 }
 
+const initialData = {
+  name: '',
+  cost: 0,
+  lat: '',
+  long: '',
+  guest: '',
+  date: ''
+};
+
 const AddEventModalForm = () => {
+  const [form, setForm] = useState(initialData);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const {
+    account: { address, provider }
+  } = useContractContext();
+
+  const onChange = (e: any) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const onHandleSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    try {
+      if (provider && address) {
+        setLoading(true);
+        const res = await new EventWise(provider, address).createEvent(
+          form.name,
+          form.lat,
+          form.long,
+          form.cost,
+          form.date
+        );
+        console.log(res);
+        setLoading(false);
+        toast.success('success full');
+        return;
+      }
+    } catch (error) {
+      toast.error('Something went wrong!');
+      return;
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="shadow-button inline-flex items-center justify-center gap-2 rounded-[32px] border border-[#353A5A] bg-ews-200 p-2 text-[14px]/[20px] font-medium text-white">
+        <button className="inline-flex items-center justify-center gap-2 rounded-[32px] border border-[#353A5A] bg-ews-200 p-2 text-[14px]/[20px] font-medium text-white shadow-button">
           Add an event
         </button>
       </DialogTrigger>
@@ -34,45 +84,71 @@ const AddEventModalForm = () => {
         <DialogHeader>
           <DialogTitle className="text-[24px] font-semibold text-ews-300">Create Event</DialogTitle>
         </DialogHeader>
-        <form className="flex w-full flex-col gap-4">
+        <form className="flex w-full flex-col justify-center gap-4" onSubmit={onHandleSubmit}>
           <TextField
             label="What is your event name?"
             type="text"
             name="name"
             placeholder="Jon Doe"
+            onChange={onChange}
+            required
           />
 
           <TextField
             label="What is the event cost?"
             type="number"
-            name="event_cost"
+            name="cost"
             placeholder="$0.00"
+            onChange={onChange}
+            required
           />
 
-          <TextField label="Longitude" type="text" name="longitude" placeholder="00000" />
+          <div className="flex space-x-4">
+            <TextField
+              label="Latitude"
+              type="text"
+              name="lat"
+              placeholder="00000"
+              onChange={onChange}
+              required
+            />
 
-          <TextField label="Latitude" type="text" name="longitude" placeholder="00000" />
+            <TextField
+              label="Longitude"
+              type="text"
+              name="long"
+              placeholder="00000"
+              onChange={onChange}
+              required
+            />
+          </div>
 
           <TextField
             label="Estimated number of attendees"
             type="number"
-            name="no"
+            name="guest"
             placeholder="300"
+            onChange={onChange}
           />
           <TextField
             label="What is the event date?"
             type="date"
             name="date"
             placeholder="MM/DD/YY"
+            onChange={onChange}
+            required
           />
 
-          <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <button className="inline-flex w-full items-center justify-center gap-2.5 rounded-3xl bg-ews-200 p-2 text-[14px]/[20px] font-medium text-white">
-                Add Event
-              </button>
-            </DialogClose>
-          </DialogFooter>
+          {/* <DialogFooter className="justify-center"> */}
+          {/* <DialogClose asChild> */}
+          <button
+            type="submit"
+            className="flex items-center gap-2.5 rounded bg-ews-200 px-4 py-3 text-ews-100 shadow-button"
+          >
+            {loading ? '....' : 'Add Event'}
+          </button>
+          {/* </DialogClose> */}
+          {/* </DialogFooter> */}
         </form>
       </DialogContent>
     </Dialog>

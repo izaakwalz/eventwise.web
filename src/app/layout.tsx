@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-// import { Poppins } from "next/font/google";
+import { Toaster } from 'sonner';
 import '@/styles/globals.css';
 import Nav from '@/components/nav';
 import Footer from '@/components/footer';
+import ContractProvider from '@/hooks/connect-wallet';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -12,13 +13,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <Nav />
-        <main className="container mx-auto w-full max-w-screen-2xl px-4 lg:px-[101px]">
-          {children}
-        </main>
-        <Footer />
-      </body>
+      <ContractProvider>
+        <body>
+          <Nav />
+          <main className="container mx-auto w-full max-w-screen-2xl px-4 lg:px-[101px]">
+            {children}
+          </main>
+          <Toaster position="bottom-right" />
+          <Footer />
+        </body>
+      </ContractProvider>
     </html>
   );
 }
