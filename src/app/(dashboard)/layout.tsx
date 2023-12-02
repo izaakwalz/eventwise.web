@@ -9,7 +9,9 @@ import PayPremium from '@/components/dashboard/pay-premium';
 import ContractProvider from '@/hooks/connect-wallet';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  useEffect(() => {}, []);
+  useEffect(() => {
+    
+  }, []);
   return (
     <ContractProvider>
       <section className="flex items-center gap-[18px] py-[100px]">
