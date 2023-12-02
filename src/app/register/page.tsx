@@ -2,7 +2,7 @@
 
 import EventWise from '@/lib/EventWise';
 import { TextField } from '@/components/ui/input';
-import { useContractContext } from '@/connect-wallet';
+import { useContractContext } from '@/hooks/connect-wallet';
 import { notFound } from 'next/navigation';
 import { useState } from 'react';
 
@@ -11,16 +11,20 @@ export default function Page() {
 
   const { account } = useContractContext();
 
-  const { address } = account;
-
   async function onSubmit(e: any) {
     e.preventDefault();
-    console.log({ address });
-    console.log(account?.provider);
-    const res = await new EventWise(account?.provider, address).createPolicy(avgAmount);
-    console.log(res);
-    // return;
+    await new EventWise(account?.provider, account?.address).createPolicy(avgAmount);
+    return;
   }
+
+  if (account && account.policy?.isExist === true) {
+    return notFound();
+  }
+
+  // const policy = await new EventWise(account?.provider, address).viewPolicy(address);
+  // const events = await new EventWise(account?.provider, address).viewUserEvents(address);
+  // console.log({ policy });
+  // console.log({ events });
 
   return (
     <section className="mx-auto my-[78px] flex w-full max-w-[560px] flex-col items-center justify-center gap-6 rounded-3xl bg-ews-600 px-4 py-8 lg:px-6 lg:py-[82px]">
