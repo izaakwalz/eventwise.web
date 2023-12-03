@@ -3,8 +3,9 @@
 import ContractAbi from '../abi/EventWise.json';
 const { BigNumber } = require('@ethersproject/bignumber');
 
-const EVENTWISE_CONTRACT_ADDRESS = '0xde40650D6222470F5e19228eD3593e41Edf20804';
-const USDT_CONTRACT_ADDRESS = '0x16deb4eeffda58D481F8348c63902156270eB226';
+const EVENTWISE_CONTRACT_ADDRESS = '0xDeee23398Bb90727a2122b4EcB61d55aD6467B33';
+// const EVENTWISE_CONTRACT_ADDRESS = '0xde40650D6222470F5e19228eD3593e41Edf20804';
+const USDT_CONTRACT_ADDRESS = '0xE1C82c45bD7faBA5960c2e6C134eb9425b88d160';
 
 // WETH deployed to: 0x2b2498C69120CdD77FAA92bEa37F48a1Ba0D97F9
 // eventWise deployed to: 0xde40650D6222470F5e19228eD3593e41Edf20804
@@ -28,10 +29,12 @@ class EventWise {
   }
 
   async viewUserEvents() {
-    let events = [],
+    let events: any = [],
       status = true;
     for (let i = 1; status; i++) {
       let event = await this.contract.methods.Events(this.fromAddress, i).call();
+      console.log(event);
+      return;
       if (event.isExists == false) {
         status = false;
         break;

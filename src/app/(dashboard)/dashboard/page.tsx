@@ -16,7 +16,7 @@ export default function Page() {
   // const events = new EventWise(provider && provider, address && address).viewUserEvents();
 
   async function getEvents(provider: any, address: any) {
-    const events = await new EventWise(provider, address).viewUserEvents();
+    let events = await new EventWise(provider, address).viewUserEvents();
     setEvents(events);
   }
 
