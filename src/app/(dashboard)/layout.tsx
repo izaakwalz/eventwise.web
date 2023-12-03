@@ -1,17 +1,38 @@
 'use client';
-import { addEventImage, payPremiumImage, requestClaimImage } from '@/config/image';
+
 import DashboardNav from '@/components/dashboard/dashboard-nav';
-import Image from 'next/image';
-import { Fragment, useEffect } from 'react';
 import AddEvent from '@/components/dashboard/add-event';
 import RequestClaim from '@/components/dashboard/request-claim';
 import PayPremium from '@/components/dashboard/pay-premium';
-import ContractProvider from '@/hooks/connect-wallet';
+import ContractProvider, { useContractContext } from '@/hooks/connect-wallet';
+import EventWise from '@/lib/EventWise';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const { account } = useContractContext();
+  const { address, provider, isAuthenticated } = account;
+
+  // if (isAuthenticated === true) {
+  //   return router.push('/');
+  // }
+
+  const onConnected = async (address: string, provider: any) => {
+    const policy = await new EventWise(provider, address).viewPolicy();
+
+    if (policy?.isExists === false) {
+      router.push('/register');
+    }
+    router.push('/dashboard');
+  };
+
   useEffect(() => {
-    
-  }, []);
+    if (address && provider) {
+      onConnected(address, provider);
+    }
+  }, [address, provider]);
+
   return (
     <ContractProvider>
       <section className="flex items-center gap-[18px] py-[100px]">

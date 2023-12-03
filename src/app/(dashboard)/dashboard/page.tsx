@@ -2,7 +2,6 @@
 
 import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
-import { getAddress, loadProvider } from '@/lib/web3-utils';
 import { useEffect, useState } from 'react';
 
 export default function Page() {

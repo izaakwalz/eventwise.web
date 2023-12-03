@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
-import '@/styles/globals.css';
 import Nav from '@/components/nav';
 import Footer from '@/components/footer';
 import ContractProvider from '@/hooks/connect-wallet';
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
