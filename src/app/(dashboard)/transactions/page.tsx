@@ -1,10 +1,14 @@
 'use client';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
+import { formatDate, formatNumber } from '@/lib/utils';
+import { formatEther } from 'ethers';
 import { useEffect, useState } from 'react';
 
 export default function Page() {
+  const [isLoading, setIsLoading] = useState<boolean>();
   const [transactions, setTransactions] = useState<any>();
   const {
     account: { address, provider }
@@ -12,20 +16,18 @@ export default function Page() {
 
   // console.log(address);
 
-  // const events = new EventWise(provider && provider, address && address).viewUserEvents();
-
-  // async function getEvents(provider: any, address: any) {
-  //   let events = await new EventWise(provider, address).();
-  //   setEvents(events);
-  // }
+  async function getTransactions(provider: any, address: any) {
+    setIsLoading(true);
+    let transactions = await new EventWise(provider, address).viewPremiumPayments();
+    setTransactions(transactions);
+    setIsLoading(false);
+  }
 
   useEffect(() => {
     if (provider && address) {
-      setTransactions([]);
+      getTransactions(provider, address);
     }
   }, [provider, address]);
-
-  console.log(transactions);
 
   return (
     <>
@@ -56,10 +58,31 @@ export default function Page() {
           <li className="text[1.125rem] font-medium">Status</li>
         </ul>
 
-        <TransactionItem date="October 15 - 17, 2023" amount={'500'} status={'pending'} />
-        <TransactionItem date="October 15 - 17, 2023" amount={'500'} status={'pending'} />
-        <TransactionItem date="October 15 - 17, 2023" amount={'500'} status={'pending'} />
-        <TransactionItem date="October 15 - 17, 2023" amount={'500'} status={'pending'} />
+        {transactions && transactions.length === 0 ? (
+          <p>You do not have any transaction</p>
+        ) : (
+          <>
+            {isLoading
+              ? [...Array(3)].map((_, index) => (
+                  <div key={index} className="mb-6 flex w-full items-start justify-between py-2">
+                    <Skeleton className="h-[20px] w-[120px]" />
+                    <Skeleton className="h-[20px] w-[120px]" />
+                    <Skeleton className="h-[20px] w-[120px]" />
+                  </div>
+                ))
+              : transactions &&
+                transactions.map((transaction: any) => (
+                  <TransactionItem
+                    date={transaction.date}
+                    amount={formatNumber(formatEther(transaction.amount))}
+                    status={'paid'}
+                  />
+                ))}
+          </>
+        )}
+
+        {/* <TransactionItem date="October 15 - 17, 2023" amount={'500'} status={'pending'} />
+        <TransactionItem date="October 15 - 17, 2023" amount={'500'} status={'pending'} /> */}
       </section>
     </>
   );

@@ -95,6 +95,11 @@ export default function ContractProvider({ children }: ContractProps) {
     setAccount(initialState);
   };
 
+  async function getEvents(provider: any, address: any) {
+    let events = await new EventWise(provider, address).viewUserEvents();
+    return events;
+  }
+
   useEffect(() => {
     connectWallet();
     // router.refresh();
@@ -122,7 +127,7 @@ export default function ContractProvider({ children }: ContractProps) {
   }, [account, router]);
 
   const contextValue = useMemo(() => {
-    return { account, connectWallet, disconnect };
+    return { account, connectWallet, disconnect, getEvents };
   }, [account, connectWallet]);
 
   return <ContractContext.Provider value={contextValue}>{children}</ContractContext.Provider>;

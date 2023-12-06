@@ -3,7 +3,8 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
-      poppins: ['Poppins', 'sans-serif']
+      poppins: ['Poppins', 'sans-serif'],
+      nico: ['Nico Moji', 'sans-serif']
     },
     extend: {
       colors: {

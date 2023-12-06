@@ -5,6 +5,14 @@
 @tailwind utilities;
  
 
+
+@font-face {
+  font-display: block;
+  font-family: Nico Moji;
+  font-style: normal;
+  font-weight: 400;
+  src: url("/font/NicoMoji-Regular.ttf") format('truetype');
+}
  
 @layer base {
 

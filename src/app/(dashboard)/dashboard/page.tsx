@@ -1,21 +1,23 @@
 'use client';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
-import { useEffect, useState } from 'react';
+import { formatDate, formatNumber } from '@/lib/utils';
+import { formatEther } from 'ethers';
+import { Fragment, useEffect, useState } from 'react';
 
 export default function Page() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [events, setEvents] = useState<any>();
   const {
     account: { address, provider }
   } = useContractContext();
 
-  // console.log(address);
-
-  // const events = new EventWise(provider && provider, address && address).viewUserEvents();
-
   async function getEvents(provider: any, address: any) {
+    setIsLoading(true);
     let events = await new EventWise(provider, address).viewUserEvents();
+    setIsLoading(false);
     setEvents(events);
   }
 
@@ -25,21 +27,41 @@ export default function Page() {
     }
   }, [provider, address]);
 
-  console.log(events);
-
   return (
     <section className="grid w-full grid-cols-4 gap-[18px]">
-      <div className="flex h-[224px] w-[234px] flex-col items-start gap-[18px] rounded-lg bg-ews-700/25 px-[27px] py-6">
-        <p className="text-[16px] font-semibold">ABC Conference</p>
+      {events && events.length === 0 ? (
+        <p className="text-[1.125rem] font-medium">You don't have any registered event</p>
+      ) : (
+        <>
+          {isLoading
+            ? [...Array(4)].map((_, index) => (
+                <div
+                  key={index}
+                  className="flex h-[224px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-500 px-[27px] py-6"
+                >
+                  <Skeleton className="h-[40px] w-[210px]" />
+                  <Skeleton className="h-[20px] w-[190px]" />
+                  <Skeleton className="h-[20px] w-[180px]" />
+                  <Skeleton className="h-[20px] w-[180px]" />
+                  <Skeleton className="h-[20px] w-[160px]" />
+                </div>
+              ))
+            : events &&
+              events.map((event: any) => (
+                <div className="flex h-[224px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-400 px-[27px] py-6">
+                  <p className="text-[16px] font-semibold">{event.name}</p>
 
-        <div className="flex w-full flex-col items-start gap-2 rounded-lg border border-ews-300 bg-white px-[11px] py-2 text-[12px]">
-          <span>Date: October 15 - 17, 2023</span>
-          <span>Attendees:</span>
-          <span>Latitude:</span>
-          <span>Longitude:</span>
-          <span>Event cost:</span>
-        </div>
-      </div>
+                  <div className="flex w-full flex-col items-start gap-2 rounded-lg border border-ews-300 bg-white px-[11px] py-2 text-[12px]">
+                    <span>Date: {formatDate(event.date)}</span>
+                    <span>Attendees:</span>
+                    <span>Latitude: {event.latitude}</span>
+                    <span>Longitude: {event.longitude}</span>
+                    <span>Event cost: ${formatNumber(formatEther(event.cost))}</span>
+                  </div>
+                </div>
+              ))}
+        </>
+      )}
     </section>
   );
 }

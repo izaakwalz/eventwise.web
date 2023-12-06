@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import EventWise from '@/lib/EventWise';
 import { useContractContext } from '@/hooks/connect-wallet';
+import { SymbolIcon } from '@radix-ui/react-icons';
 
 export default function AddEvent() {
   return (
@@ -40,7 +41,7 @@ const initialData = {
 
 const AddEventModalForm = () => {
   const [form, setForm] = useState(initialData);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     account: { address, provider }
@@ -54,16 +55,18 @@ const AddEventModalForm = () => {
     e.preventDefault();
     try {
       if (provider && address) {
-        setLoading(true);
+        setIsLoading(true);
+        let _date = new Date(form.date).getSeconds().toString();
+        console.log(_date);
         const res = await new EventWise(provider, address).createEvent(
           form.name,
           form.lat,
           form.long,
           form.cost,
-          form.date
+          _date
         );
-        console.log(res);
-        setLoading(false);
+        // console.log(res);
+        setIsLoading(false);
         toast.success('success full');
         return;
       }
@@ -139,14 +142,16 @@ const AddEventModalForm = () => {
             required
           />
 
-          {/* <DialogFooter className="justify-center"> */}
+          {/* <DialogFooter className="flex items-center justify-center"> */}
           {/* <DialogClose asChild> */}
-          <button
-            type="submit"
-            className="flex items-center gap-2.5 rounded bg-ews-200 px-4 py-3 text-ews-100 shadow-button"
-          >
-            {loading ? '....' : 'Add Event'}
-          </button>
+          <div className="mt-4 flex items-center justify-center">
+            <button
+              className="flex items-center gap-2.5 rounded-full bg-ews-200 px-6 py-3 text-[1rem]/[1.25rem] font-medium shadow-button"
+              disabled={isLoading}
+            >
+              {isLoading ? <SymbolIcon className=" h-3 w-3 animate-spin" /> : null} Register event
+            </button>
+          </div>
           {/* </DialogClose> */}
           {/* </DialogFooter> */}
         </form>

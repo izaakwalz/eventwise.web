@@ -13,7 +13,9 @@ import {
 import { payPremiumImage } from '@/config/image';
 import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
+import { SymbolIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function PayPremium() {
   return (
@@ -32,6 +34,7 @@ export default function PayPremium() {
 }
 
 const PayPremiumModal = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     account: { address, provider }
   } = useContractContext();
@@ -39,13 +42,14 @@ const PayPremiumModal = () => {
   async function handlePayPremium() {
     try {
       if (provider && address) {
-        // console.log({ address, provider });
-        // return;
+        setIsLoading(true);
         await new EventWise(provider, address).payPremium();
+        setIsLoading(false);
         return;
       }
     } catch (error) {
       console.log(error);
+      return;
     }
   }
 
@@ -65,16 +69,15 @@ const PayPremiumModal = () => {
             Amount due for the current premium payment $500
           </div>
 
-          <DialogFooter className="sm:justify-start">
-            {/* <DialogClose asChild> */}
+          <div className="mt-4 flex items-center justify-center">
             <button
+              className="flex items-center gap-2.5 rounded-full bg-ews-200 px-6 py-3 text-[1rem]/[1.25rem] font-medium shadow-button"
               onClick={handlePayPremium}
-              className="inline-flex w-full items-center justify-center gap-2.5 rounded-3xl bg-ews-200 p-2 text-[14px]/[20px] font-medium text-white"
+              disabled={isLoading}
             >
-              Claim
+              {isLoading ? <SymbolIcon className=" h-3 w-3 animate-spin" /> : null} Claim
             </button>
-            {/* </DialogClose> */}
-          </DialogFooter>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

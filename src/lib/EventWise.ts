@@ -42,7 +42,7 @@ class EventWise {
     return events;
   }
 
-  async viewPremiumPayments(user: string) {
+  async viewPremiumPayments() {
     let payments: any = [];
     const events = await this.contract.getPastEvents('PremiumPaid', {
       fromBlock: 0,
@@ -108,7 +108,6 @@ class EventWise {
   async createEvent(name: string, lat: string, long: string, cost: any, date: string) {
     try {
       let _cost = parseEther(cost);
-      let _date = new Date(date);
       let action = await this.contract.methods.createEvent(name, lat, long, _cost, date);
 
       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
