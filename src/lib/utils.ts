@@ -32,10 +32,24 @@ export function formatNumber(
   }).format(Number(number));
 }
 
-export function formatDate(date: Date | string | number) {
+export function formatDateTXn(date: Date | string | number) {
   return new Intl.DateTimeFormat('en-US', {
     month: 'long',
     day: 'numeric',
     year: 'numeric'
   }).format(new Date(date));
+}
+
+export function formatDate(timestamp: any) {
+  // var date = new Date(parseInt(timestamp));
+  // return date.toLocaleString();
+  const date = new Date(parseInt(timestamp));
+  return date.toLocaleDateString('en-US').replace(' ', '-');
+}
+
+export function formatDateToTimeStamp(date: string) {
+  const newDate = new Date(date);
+  const timestamp = newDate.getTime();
+  console.log(timestamp.toString());
+  return timestamp;
 }

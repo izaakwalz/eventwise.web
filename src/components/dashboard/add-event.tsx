@@ -19,12 +19,12 @@ import { toast } from 'sonner';
 import EventWise from '@/lib/EventWise';
 import { useContractContext } from '@/hooks/connect-wallet';
 import { SymbolIcon } from '@radix-ui/react-icons';
+import { formatDateToTimeStamp } from '@/lib/utils';
 
 export default function AddEvent() {
   return (
     <div className="flex h-[228px] w-[190px] flex-col items-center  justify-center gap-[29px] rounded-lg border border-black px-6 py-[28px]">
       <Image src={addEventImage} alt="" width={113} height={119} />
-
       <AddEventModalForm />
     </div>
   );
@@ -35,7 +35,7 @@ const initialData = {
   cost: 0,
   lat: '',
   long: '',
-  guest: '',
+  attendees: '',
   date: ''
 };
 
@@ -56,22 +56,24 @@ const AddEventModalForm = () => {
     try {
       if (provider && address) {
         setIsLoading(true);
-        let _date = new Date(form.date).getSeconds().toString();
-        console.log(_date);
+        let _date = formatDateToTimeStamp(form.date);
+        console.log(form);
         const res = await new EventWise(provider, address).createEvent(
           form.name,
           form.lat,
           form.long,
+          form.attendees,
           form.cost,
           _date
         );
-        // console.log(res);
+        console.log(res);
         setIsLoading(false);
-        toast.success('success full');
+        toast.success('Event added!');
         return;
       }
     } catch (error) {
       toast.error('Something went wrong!');
+      console.log(error);
       return;
     }
   };
@@ -129,7 +131,7 @@ const AddEventModalForm = () => {
           <TextField
             label="Estimated number of attendees"
             type="number"
-            name="guest"
+            name="attendees"
             placeholder="300"
             onChange={onChange}
           />

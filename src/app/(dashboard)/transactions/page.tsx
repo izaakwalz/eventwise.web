@@ -96,7 +96,7 @@ type TransactionItemProp = {
 
 const TransactionItem = ({ date, amount, status }: TransactionItemProp) => (
   <ul className="mb-6 flex  w-full items-start justify-between border-b py-2">
-    <li className="text[1.125rem]">{date}</li>
+    <li className="text[1.125rem]">{formatDate(date)}</li>
     <li className="text[1.125rem]">${amount}</li>
     <li className="text[1.125rem]">{status}</li>
   </ul>

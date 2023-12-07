@@ -1,10 +1,10 @@
 import ContractAbi from '../abi/EventWise.json';
-import { parseEther } from 'ethers';
+import ERCToken from '../abi/ERC20Token.json';
+import { formatEther, parseEther } from 'ethers';
 // const { BigNumber } = require('@ethersproject/bignumber');
 
-const EVENTWISE_CONTRACT_ADDRESS = '0xDeee23398Bb90727a2122b4EcB61d55aD6467B33';
-// const EVENTWISE_CONTRACT_ADDRESS = '0xde40650D6222470F5e19228eD3593e41Edf20804';
-const USDT_CONTRACT_ADDRESS = '0xE1C82c45bD7faBA5960c2e6C134eb9425b88d160';
+const EVENTWISE_CONTRACT_ADDRESS = '0x6d7B7DE1f0114c11b8739b779d0C1dE5aF88f482';
+const USDT_CONTRACT_ADDRESS = '0xC8A71BACF28e24A274b95e785c436bb5F57043Ae';
 
 // const USDT_CONTRACT_ADDRESS = '0xE1C82c45bD7faBA5960c2e6C134eb9425b88d160';
 
@@ -12,14 +12,18 @@ class EventWise {
   contract;
   client;
   fromAddress;
+  token;
+  tokenAddress;
 
   constructor(_client: any, _fromAddress: string) {
     this.client = _client;
     this.fromAddress = _fromAddress;
+    this.tokenAddress = USDT_CONTRACT_ADDRESS;
     this.contract = new this.client.eth.Contract(
       ContractAbi.abi,
       EVENTWISE_CONTRACT_ADDRESS.trim()
     );
+    this.token = new this.client.eth.Contract(ERCToken.abi, USDT_CONTRACT_ADDRESS.trim());
   }
 
   async viewPolicy() {
@@ -27,11 +31,11 @@ class EventWise {
   }
 
   async viewUserEvents() {
-    let events: any = [],
+    let events = [],
       status = true;
+
     for (let i = 1; status; i++) {
       let event = await this.contract.methods.Events(this.fromAddress, i).call();
-
       if (event.isExists == false) {
         status = false;
         break;
@@ -93,24 +97,43 @@ class EventWise {
 
   async payPremium() {
     try {
+      let policy = await this.contract.methods.InsurancePolicy(this.fromAddress).call();
+
+      let approveAction = await this.token.methods.approve(
+        EVENTWISE_CONTRACT_ADDRESS,
+        formatEther(policy.premiumAmount)
+      );
+      let approveGas = Math.floor(
+        (await approveAction.estimateGas({ from: this.fromAddress })) * 1.4
+      );
+      let approveTxn = await this._sendTransaction(approveAction, approveGas);
+      console.log({ approveTxn });
+
       let action = await this.contract.methods.payPremium();
-      let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
+      let payPremiumGas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
+      let payPremiumTxn = await this._sendTransaction(action, payPremiumGas);
+      console.log({ payPremiumTxn });
 
-      let txn = await this._sendTransaction(action, gas);
-      console.log({ txn });
-
-      return { ok: true, data: txn };
+      return { ok: true, data: payPremiumTxn };
     } catch (error) {
+      console.log(error);
       return { ok: false, data: error };
     }
   }
 
-  async createEvent(name: string, lat: string, long: string, cost: any, date: string) {
+  async createEvent(
+    name: string,
+    lat: string,
+    long: string,
+    attendees: any,
+    cost: any,
+    date: string | number
+  ) {
     try {
       let _cost = parseEther(cost);
-      let action = await this.contract.methods.createEvent(name, lat, long, _cost, date);
-
+      let action = await this.contract.methods.createEvent(name, lat, long, attendees, _cost, date);
       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
+
       let txn = await this._sendTransaction(action, gas);
       console.log({ txn });
 
@@ -120,7 +143,7 @@ class EventWise {
     }
   }
 
-  async registerClaim(eventId: string, reason: string) {
+  async registerClaim(eventId: any, reason: string) {
     try {
       let action = await this.contract.methods.initiateClaim(eventId, reason);
       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
@@ -134,7 +157,7 @@ class EventWise {
     }
   }
 
-  async completeClaim(eventId: string) {
+  async completeClaim(eventId: any) {
     try {
       let action = await this.contract.methods.completeClaim(eventId);
       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
@@ -159,6 +182,8 @@ class EventWise {
   }
 }
 
+export default EventWise;
+
 // class EventWise {
 //   contract;
 //   client;
@@ -166,22 +191,23 @@ class EventWise {
 
 //   constructor(_client: any, _fromAddress: string) {
 //     this.client = _client;
+//     this.fromAddress = _fromAddress;
 //     this.contract = new this.client.eth.Contract(
 //       ContractAbi.abi,
 //       EVENTWISE_CONTRACT_ADDRESS.trim()
 //     );
-//     this.fromAddress = _fromAddress;
 //   }
 
-//   async viewPolicy(address: any) {
-//     return await this.contract.methods.InsurancePolicy(address).call();
+//   async viewPolicy() {
+//     return await this.contract.methods.InsurancePolicy(this.fromAddress).call();
 //   }
 
 //   async viewUserEvents() {
-//     let events = [],
+//     let events: any = [],
 //       status = true;
 //     for (let i = 1; status; i++) {
 //       let event = await this.contract.methods.Events(this.fromAddress, i).call();
+
 //       if (event.isExists == false) {
 //         status = false;
 //         break;
@@ -192,7 +218,7 @@ class EventWise {
 //     return events;
 //   }
 
-//   async viewPremiumPayments(user: string) {
+//   async viewPremiumPayments() {
 //     let payments: any = [];
 //     const events = await this.contract.getPastEvents('PremiumPaid', {
 //       fromBlock: 0,
@@ -205,7 +231,7 @@ class EventWise {
 //     return payments;
 //   }
 
-//   async viewClaims(user: string) {
+//   async viewClaims() {
 //     let claims = [];
 //     const events = await this.contract.getPastEvents('ClaimInitiated', {
 //       fromBlock: 0,
@@ -213,8 +239,12 @@ class EventWise {
 //     });
 
 //     for (const e of events) {
-//       let event = await this.contract.methods.Events(user, e.returnValues.eventId).call();
-//       let claim = await this.contract.methods.Claims(user, e.returnValues.eventId).call();
+//       let event = await this.contract.methods
+//         .Events(this.fromAddress, e.returnValues.eventId)
+//         .call();
+//       let claim = await this.contract.methods
+//         .Claims(this.fromAddress, e.returnValues.eventId)
+//         .call();
 //       e.returnValues.status = claim.status === 0 ? 'pending' : 'claimed';
 //       e.returnValues.eventDate = event.date;
 //       e.returnValues.eventCost = event.cost;
@@ -225,7 +255,7 @@ class EventWise {
 
 //   async createPolicy(_avgEventCost: any) {
 //     try {
-//       let action = await this.contract.methods.createPolicy(_avgEventCost);
+//       let action = await this.contract.methods.createPolicy(parseEther(_avgEventCost));
 //       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
 
 //       let txn = await this._sendTransaction(action, gas);
@@ -240,8 +270,6 @@ class EventWise {
 //   async payPremium() {
 //     try {
 //       let action = await this.contract.methods.payPremium();
-//       console.log(this.fromAddress);
-//       return;
 //       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
 
 //       let txn = await this._sendTransaction(action, gas);
@@ -253,33 +281,24 @@ class EventWise {
 //     }
 //   }
 
-//   // async createEvent(name: string, lat: string, long: string, cost: any, date: string) {
-//   //   try {
-//   //     let action = await this.contract.methods.createEvent(name, lat, long, cost, date);
-//   //     let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
-
-//   //     let txn = await this._sendTransaction(action, gas);
-//   //     console.log({ txn });
-
-//   //     return { ok: true, data: txn };
-//   //   } catch (error) {
-//   //     return { ok: false, data: error };
-//   //   }
-//   // }
-
-//   async createEvent(name: string, lat: string, long: string, cost: any, date: string) {
+//   async createEvent(
+//     name: string,
+//     lat: string,
+//     long: string,
+//     attendees: string,
+//     cost: any,
+//     date: string | number
+//   ) {
 //     try {
-//       let _cost = BigNumber.from(cost * 10 ** 18);
-//       console.log(_cost);
-//       return;
-//       let action = await this.contract.methods.createEvent(name, lat, long, _cost, date);
-//       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
+//       let _cost = parseEther(cost);
+//       let action = await this.contract.methods.createEvent(name, lat, long, attendees, _cost, date);
 
+//       let gas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
 //       let txn = await this._sendTransaction(action, gas);
 //       console.log({ txn });
 
 //       return { ok: true, data: txn };
-//     } catch (error: any) {
+//     } catch (error) {
 //       return { ok: false, data: error };
 //     }
 //   }
@@ -322,14 +341,3 @@ class EventWise {
 //     });
 //   }
 // }
-
-export default EventWise;
-
-// console.log({ xxx: new Web3 }); return;
-// const client = Web3(process.env.SEPOLIA_RPC);
-
-// let client = new Web3(process.env.SEPOLIA_RPC)
-// new EventWise(client).viewPolicy('0x10B3fA7Fc49e45CAe6d32A113731A917C4F1755a').then((viewPolicy) => {
-
-//     console.log({ viewPolicy })
-// });

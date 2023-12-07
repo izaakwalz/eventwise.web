@@ -84,7 +84,11 @@ const RequestClaimModal = ({ events }: { events: any[] }) => {
             >
               <option defaultValue="">Select ID</option>
               {events &&
-                events.map((event: any) => <option value={event.name}>{event.name}</option>)}
+                events.map((event: any) => (
+                  <option key={event.date} value={event.name}>
+                    {event.name}
+                  </option>
+                ))}
             </select>
             <TextField
               label="What is the event date?"

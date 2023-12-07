@@ -27,6 +27,8 @@ export default function Page() {
     }
   }, [provider, address]);
 
+  console.log(events);
+
   return (
     <section className="grid w-full grid-cols-4 gap-[18px]">
       {events && events.length === 0 ? (
@@ -48,7 +50,10 @@ export default function Page() {
               ))
             : events &&
               events.map((event: any) => (
-                <div className="flex h-[224px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-400 px-[27px] py-6">
+                <div
+                  key={event.date}
+                  className="flex h-[224px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-400 px-[27px] py-6"
+                >
                   <p className="text-[16px] font-semibold">{event.name}</p>
 
                   <div className="flex w-full flex-col items-start gap-2 rounded-lg border border-ews-300 bg-white px-[11px] py-2 text-[12px]">
