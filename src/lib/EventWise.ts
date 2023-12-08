@@ -1,12 +1,9 @@
-import ContractAbi from '../abi/EventWise.json';
-import ERCToken from '../abi/ERC20Token.json';
+import ContractAbi from '../abi/EventWiseAbi.json';
+import ERCTokenAbi from '../abi/ERC20TokenAbi.json';
 import { formatEther, parseEther } from 'ethers';
-// const { BigNumber } = require('@ethersproject/bignumber');
 
 const EVENTWISE_CONTRACT_ADDRESS = '0x6d7B7DE1f0114c11b8739b779d0C1dE5aF88f482';
 const USDT_CONTRACT_ADDRESS = '0xC8A71BACF28e24A274b95e785c436bb5F57043Ae';
-
-// const USDT_CONTRACT_ADDRESS = '0xE1C82c45bD7faBA5960c2e6C134eb9425b88d160';
 
 class EventWise {
   contract;
@@ -23,7 +20,7 @@ class EventWise {
       ContractAbi.abi,
       EVENTWISE_CONTRACT_ADDRESS.trim()
     );
-    this.token = new this.client.eth.Contract(ERCToken.abi, USDT_CONTRACT_ADDRESS.trim());
+    this.token = new this.client.eth.Contract(ERCTokenAbi.abi, USDT_CONTRACT_ADDRESS.trim());
   }
 
   async viewPolicy() {
