@@ -7,24 +7,27 @@ import PayPremium from '@/components/dashboard/pay-premium';
 import ContractProvider, { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { account } = useContractContext();
   const { address, provider, isAuthenticated } = account;
+  const [userPolicy, setUserPolicy] = useState<any>(null);
 
-  // if (isAuthenticated === true) {
-  //   return router.push('/');
-  // }
+  useEffect(() => {
+    console.log('yyy', userPolicy?.avgEventCost);
+  });
 
   const onConnected = async (address: string, provider: any) => {
     const policy = await new EventWise(provider, address).viewPolicy();
 
     if (policy?.isExists === false) {
       router.push('/register');
+    } else {
+      setUserPolicy(policy);
+      router.push('/dashboard');
     }
-    router.push('/dashboard');
   };
 
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <AddEvent />
         <RequestClaim />
-        <PayPremium />
+        <PayPremium premiumAmount={userPolicy?.premiumAmount} />
       </section>
 
       <DashboardNav />

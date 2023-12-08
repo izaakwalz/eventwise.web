@@ -71,12 +71,14 @@ export default function Page() {
                   </div>
                 ))
               : transactions &&
-                transactions.map((transaction: any) => (
-                  <TransactionItem
-                    date={transaction.date}
-                    amount={formatNumber(formatEther(transaction.amount))}
-                    status={'paid'}
-                  />
+                transactions.map((transaction: any, key: any) => (
+                  <div key={key}>
+                    <TransactionItem
+                      date={transaction.date}
+                      amount={formatNumber(formatEther(transaction.amount))}
+                      status={'paid'}
+                    />
+                  </div>
                 ))}
           </>
         )}
