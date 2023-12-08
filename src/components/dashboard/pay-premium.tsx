@@ -14,10 +14,11 @@ import { payPremiumImage } from '@/config/image';
 import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
 import { SymbolIcon } from '@radix-ui/react-icons';
+import { formatEther } from 'ethers';
 import Image from 'next/image';
 import { useState } from 'react';
 
-export default function PayPremium() {
+export default function PayPremium({ premiumAmount }: any) {
   return (
     <div className="flex h-[228px] w-[190px] flex-col items-center  justify-center gap-2 rounded-lg border border-black px-[14px] py-[28px]">
       <Image src={payPremiumImage} alt="" width={69} height={79} />
@@ -25,7 +26,8 @@ export default function PayPremium() {
       <div className="flex flex-col items-center justify-center gap-1 p-2 text-center">
         <dt className="text-[10px] font-semibold">Upcoming payment date</dt>
         <dd className="text-[8px] font-semibold">
-          Your next payment of $500.00 is due on November 15, 2023
+          Your next payment of ${premiumAmount ? formatEther(premiumAmount) : null} is due on
+          November 15, 2023
         </dd>
       </div>
       <PayPremiumModal />
@@ -41,15 +43,16 @@ const PayPremiumModal = () => {
 
   async function handlePayPremium() {
     try {
-      if (provider && address) {
-        setIsLoading(true);
-        await new EventWise(provider, address).payPremium();
-        setIsLoading(false);
+      if (!provider && !address) {
         return;
       }
+
+      setIsLoading(true);
+      let payPremium = await new EventWise(provider, address).payPremium();
+      console.log({ payPremium });
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
-      return;
     }
   }
 
