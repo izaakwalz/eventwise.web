@@ -58,10 +58,11 @@ class EventWise {
 
   async viewClaims() {
     let claims = [];
-    const events = await this.contract.getPastEvents('ClaimInitiated', {
+    let events = await this.contract.getPastEvents('ClaimInitiated', {
       fromBlock: 0,
       toBlock: 'latest'
-    });
+    })
+    events = events.filter((e: any) => e.returnValues.user === this.fromAddress);
 
     for (const e of events) {
       let event = await this.contract.methods

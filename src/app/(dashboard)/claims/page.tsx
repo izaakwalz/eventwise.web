@@ -49,9 +49,9 @@ export default function Page() {
                 </div>
               ))
             : claims &&
-              claims.map((claim: any) => (
-                <div className="flex h-[230px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-700/25 px-[27px] py-6">
-                  <p className="text-[16px] font-semibold">{claim.reason}</p>
+              claims.map((claim: any,key:any) => (
+                <div key={key} className="flex h-[230px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-700/25 px-[27px] py-6">
+                  <p className="text-[16px] font-semibold capitalize">{claim.reason}</p>
 
                   <div className="flex w-full flex-col items-start gap-2 rounded-lg border border-ews-300 bg-white px-[11px] py-2 text-[12px]">
                     <dl className="flex gap-[2px]">

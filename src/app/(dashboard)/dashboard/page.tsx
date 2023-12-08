@@ -54,14 +54,24 @@ export default function Page() {
                   key={event.date}
                   className="flex h-[224px] w-full flex-col items-start gap-[18px] rounded-lg bg-ews-400 px-[27px] py-6"
                 >
-                  <p className="text-[16px] font-semibold">{event.name}</p>
+                  <p className="text-[16px] font-semibold capitalize">{event.name}</p>
 
                   <div className="flex w-full flex-col items-start gap-2 rounded-lg border border-ews-300 bg-white px-[11px] py-2 text-[12px]">
-                    <span>Date: {formatDate(event.date)}</span>
-                    <span>Attendees:</span>
-                    <span>Latitude: {event.latitude}</span>
-                    <span>Longitude: {event.longitude}</span>
-                    <span>Event cost: ${formatNumber(formatEther(event.cost))}</span>
+                    <div className="flex w-full justify-between">
+                      <div>Date:</div> <div> {formatDate(event.date)}</div>
+                    </div>
+                    <div className="flex w-full justify-between">
+                      <div>Attendees:</div> <div> {event.attendees}</div>
+                    </div>
+                    <div className="flex w-full justify-between">
+                      <div>Latitude:</div> <div> {event.latitude}</div>
+                    </div>
+                    <div className="flex w-full justify-between">
+                      <div>Longitude:</div> <div> {event.longitude}</div>
+                    </div>
+                    <div className="flex w-full justify-between">
+                      <div>Event cost:</div> <div> ${formatNumber(formatEther(event.cost))}</div>
+                    </div>
                   </div>
                 </div>
               ))}
