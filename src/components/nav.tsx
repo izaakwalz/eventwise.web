@@ -10,7 +10,7 @@ export default function Nav() {
       <Link href={'/'}>
         <Image src={logo} alt="event wise" width={166} height={24} className="" priority />
       </Link>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-5">
         <DashboardButton />
         <ConnectWalletButton />
       </div>
