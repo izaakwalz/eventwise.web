@@ -70,7 +70,7 @@ class EventWise {
       let claim = await this.contract.methods
         .Claims(this.fromAddress, e.returnValues.eventId)
         .call();
-      e.returnValues.status = claim.status === 0 ? 'pending' : 'claimed';
+      e.returnValues.status = claim.status == '0' ? 'pending' : 'claimed';
       e.returnValues.eventDate = event.date;
       e.returnValues.eventCost = event.cost;
       claims.push(e.returnValues);
