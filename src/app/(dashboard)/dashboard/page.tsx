@@ -5,7 +5,7 @@ import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
 import { formatDate, formatNumber } from '@/lib/utils';
 import { formatEther } from 'ethers';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,7 +27,7 @@ export default function Page() {
     }
   }, [provider, address]);
 
-  console.log(events);
+  // console.log(events);
 
   return (
     <section className="grid w-full grid-cols-4 gap-[18px]">

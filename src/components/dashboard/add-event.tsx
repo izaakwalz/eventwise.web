@@ -57,7 +57,7 @@ const AddEventModalForm = () => {
       if (provider && address) {
         setIsLoading(true);
         let _date = formatDateToTimeStamp(form.date);
-        console.log(form);
+        // console.log(form);
         const res = await new EventWise(provider, address).createEvent(
           form.name,
           form.lat,
@@ -66,14 +66,14 @@ const AddEventModalForm = () => {
           form.cost,
           _date
         );
-        console.log(res);
+        // console.log(res);
         setIsLoading(false);
         toast.success('Event added!');
         return;
       }
     } catch (error) {
       toast.error('Something went wrong!');
-      console.log(error);
+      // console.log(error);
       return;
     }
   };

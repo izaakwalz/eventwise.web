@@ -1,5 +1,5 @@
-import ContractAbi from '../abi/EventWise.json';
-import ERCToken from '../abi/ERC20Token.json';
+import ContractAbi from '../abi/EventWiseAbi.json';
+import ERCTokenAbi from '../abi/ERC20TokenAbi.json';
 import { parseEther } from 'ethers';
 
 const EVENTWISE_CONTRACT_ADDRESS = '0x6d7B7DE1f0114c11b8739b779d0C1dE5aF88f482';
@@ -20,7 +20,7 @@ class EventWise {
       ContractAbi.abi,
       EVENTWISE_CONTRACT_ADDRESS.trim()
     );
-    this.token = new this.client.eth.Contract(ERCToken.abi, TOKEN_CONTRACT_ADDRESS.trim());
+    this.token = new this.client.eth.Contract(ERCTokenAbi.abi, TOKEN_CONTRACT_ADDRESS.trim());
   }
 
   async viewPolicy() {
@@ -103,12 +103,20 @@ class EventWise {
       let approveGas = Math.floor(
         (await approveAction.estimateGas({ from: this.fromAddress })) * 1.4
       );
-      let approveTxn = await this._sendTransaction(approveAction, approveGas, TOKEN_CONTRACT_ADDRESS);
+      let approveTxn = await this._sendTransaction(
+        approveAction,
+        approveGas,
+        TOKEN_CONTRACT_ADDRESS
+      );
       console.log({ approveTxn });
 
       let action = await this.contract.methods.payPremium();
       let payPremiumGas = Math.floor((await action.estimateGas({ from: this.fromAddress })) * 1.4);
-      let payPremiumTxn = await this._sendTransaction(action, payPremiumGas, EVENTWISE_CONTRACT_ADDRESS);
+      let payPremiumTxn = await this._sendTransaction(
+        action,
+        payPremiumGas,
+        EVENTWISE_CONTRACT_ADDRESS
+      );
       console.log({ payPremiumTxn });
 
       return { ok: true, data: payPremiumTxn };
@@ -180,4 +188,3 @@ class EventWise {
 }
 
 export default EventWise;
-

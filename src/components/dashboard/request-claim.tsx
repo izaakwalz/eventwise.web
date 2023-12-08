@@ -15,6 +15,14 @@ import { string } from 'zod';
 import { useEffect, useState } from 'react';
 import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
+import { SymbolIcon } from '@radix-ui/react-icons';
+import { toast } from 'sonner';
+
+type ClaimProps = {
+  events: any[];
+  address: string;
+  provider: any;
+};
 
 export default function RequestClaim() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,17 +48,43 @@ export default function RequestClaim() {
     <div className="flex h-[228px] w-[190px] flex-col items-center  justify-center gap-[29px] rounded-lg border border-black px-6 py-[28px]">
       <Image src={requestClaimImage} alt="" width={113} height={119} />
 
-      <RequestClaimModal events={events} />
+      <RequestClaimModal events={events} address={address} provider={provider} />
     </div>
   );
 }
 
 const initialData = {
-  id: '',
-  reason: string
+  eventId: '',
+  reason: ''
 };
 
-const RequestClaimModal = ({ events }: { events: any[] }) => {
+const RequestClaimModal = ({ events, provider, address }: ClaimProps) => {
+  const [form, setForm] = useState(initialData);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const onChange = (e: any) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const onHandleSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    try {
+      if (provider && address) {
+        setIsLoading(true);
+        // console.log(form);
+        const res = await new EventWise(provider, address).registerClaim(form.eventId, form.reason);
+        // console.log(res);
+        setIsLoading(false);
+        toast.success('Claim Requested!');
+        return;
+      }
+    } catch (error) {
+      toast.error('Something went wrong!');
+      // console.log(error);
+      return;
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -68,48 +102,50 @@ const RequestClaimModal = ({ events }: { events: any[] }) => {
         {events && events.length === 0 ? (
           <p>Please Register Your Event</p>
         ) : (
-          <form className="flex w-full flex-col gap-4">
-            <TextField
-              label="Select reason for claim?"
-              type="text"
-              name="name"
-              placeholder="Rain?"
-              required
-            />
-
+          <form onSubmit={onHandleSubmit} className="flex w-full flex-col gap-4">
+            <label htmlFor={'reason'} className="flex w-full flex-col items-start gap-4">
+              <p className="text-[18px] font-medium">Select reason for claim?</p>
+            </label>
             <select
-              name=""
-              id=""
+              name="reason"
+              id="reason"
               className="flex w-full gap-2 rounded-lg border border-ews-300 bg-white px-4 py-2 text-[18px] placeholder:font-medium placeholder:text-ews-300/50"
-            >
-              <option defaultValue="">Select ID</option>
-              {events &&
-                events.map((event: any) => (
-                  <option key={event.date} value={event.name}>
-                    {event.name}
-                  </option>
-                ))}
-            </select>
-            <TextField
-              label="What is the event date?"
-              type="date"
-              name="date"
-              placeholder="MM/DD/YY"
+              onChange={onChange}
               required
-            />
+            >
+              <option value="rain">Rain</option>
+              <option value="flood">Flood</option>
+              <option value="earthquakes">Earthquakes</option>
+              <option value="wildfires">Wildfires</option>
+              <option value="thunderstorms">Thunderstorms</option>
+            </select>
+            <label htmlFor="eveny_id" className="flex w-full flex-col items-start gap-4">
+              <p className="text-[18px] font-medium">Select your event</p>
+              <select
+                name="eventId"
+                id="event"
+                className="flex w-full gap-2 rounded-lg border border-ews-300 bg-white px-4 py-2 text-[18px] placeholder:font-medium placeholder:text-ews-300/50"
+                onChange={onChange}
+                required
+              >
+                <option defaultValue="">Select ID</option>
+                {events &&
+                  events.map((event: any) => (
+                    <option key={event.date} value={event.eventId}>
+                      {event.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+
             <div className="mt-4 flex items-center justify-center">
-              <button className="flex items-center gap-2.5 rounded-full bg-ews-200 px-6 py-3 text-[1rem]/[1.25rem] font-medium shadow-button">
-                Claim
+              <button
+                className="flex items-center gap-2.5 rounded-full bg-ews-200 px-6 py-3 text-[1rem]/[1.25rem] font-medium shadow-button"
+                disabled={isLoading}
+              >
+                {isLoading ? <SymbolIcon className=" h-3 w-3 animate-spin" /> : null} Request
               </button>
             </div>
-
-            {/* <DialogFooter className="sm:justify-start">
-              <DialogClose asChild>
-                <button className="inline-flex w-full items-center justify-center gap-2.5 rounded-3xl bg-ews-200 p-2 text-[14px]/[20px] font-medium text-white">
-                  Claim
-                </button>
-              </DialogClose>
-            </DialogFooter> */}
           </form>
         )}
       </DialogContent>
