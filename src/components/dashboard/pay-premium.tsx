@@ -16,6 +16,7 @@ import EventWise from '@/lib/EventWise';
 import { SymbolIcon } from '@radix-ui/react-icons';
 import { formatEther } from 'ethers';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function PayPremium({ premiumAmount }: any) {
@@ -30,12 +31,14 @@ export default function PayPremium({ premiumAmount }: any) {
           November 15, 2023
         </dd>
       </div>
-      <PayPremiumModal />
+      <PayPremiumModal premiumAmount={premiumAmount ? formatEther(premiumAmount) : null} />
     </div>
   );
 }
 
-const PayPremiumModal = () => {
+const PayPremiumModal = ({ premiumAmount }: { premiumAmount: any }) => {
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     account: { address, provider }
@@ -51,6 +54,7 @@ const PayPremiumModal = () => {
       let payPremium = await new EventWise(provider, address).payPremium();
       console.log({ payPremium });
       setIsLoading(false);
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +73,7 @@ const PayPremiumModal = () => {
         </DialogHeader>
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center justify-center gap-2 rounded-xl bg-white/[0.58] px-4 py-2 text-[18px]">
-            Amount due for the current premium payment $500
+            Amount due for the current premium payment ${premiumAmount}
           </div>
 
           <div className="mt-4 flex items-center justify-center">

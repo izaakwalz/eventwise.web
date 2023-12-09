@@ -16,12 +16,14 @@ declare global {
 export interface IAccount {
   address: string;
   provider: any;
+  policy: any;
   isNetwork: boolean;
   isAuthenticated: boolean;
 }
 
 const initialState: IAccount = {
   address: '',
+  policy: null,
   provider: null,
   isNetwork: false,
   isAuthenticated: false
@@ -60,7 +62,7 @@ export default function ContractProvider({ children }: ContractProps) {
       const address = await getAddress();
       const userChainID = await getChainID();
 
-      // const policy = await new EventWise(provider, address).viewPolicy();
+      const policy = await new EventWise(provider, address).viewPolicy();
 
       if (userChainID !== ChainId) {
         setAccount({
@@ -79,6 +81,7 @@ export default function ContractProvider({ children }: ContractProps) {
         ...initialState,
         address,
         provider,
+        policy,
         isNetwork: true,
         isAuthenticated: true
       });

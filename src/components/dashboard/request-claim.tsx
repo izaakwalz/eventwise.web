@@ -17,6 +17,7 @@ import { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
 import { SymbolIcon } from '@radix-ui/react-icons';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type ClaimProps = {
   events: any[];
@@ -59,6 +60,7 @@ const initialData = {
 };
 
 const RequestClaimModal = ({ events, provider, address }: ClaimProps) => {
+  const router = useRouter();
   const [form, setForm] = useState(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -75,6 +77,7 @@ const RequestClaimModal = ({ events, provider, address }: ClaimProps) => {
         const res = await new EventWise(provider, address).registerClaim(form.eventId, form.reason);
         // console.log(res);
         setIsLoading(false);
+        router.refresh();
         toast.success('Claim Requested!');
         return;
       }

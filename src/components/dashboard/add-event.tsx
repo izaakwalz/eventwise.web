@@ -20,6 +20,7 @@ import EventWise from '@/lib/EventWise';
 import { useContractContext } from '@/hooks/connect-wallet';
 import { SymbolIcon } from '@radix-ui/react-icons';
 import { formatDateToTimeStamp } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export default function AddEvent() {
   return (
@@ -40,6 +41,7 @@ const initialData = {
 };
 
 const AddEventModalForm = () => {
+  const router = useRouter();
   const [form, setForm] = useState(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -68,6 +70,7 @@ const AddEventModalForm = () => {
         );
         // console.log(res);
         setIsLoading(false);
+        router.refresh();
         toast.success('Event added!');
         return;
       }
@@ -110,18 +113,18 @@ const AddEventModalForm = () => {
 
           <div className="flex space-x-4">
             <TextField
-              label="Latitude"
+              label="Longitude"
               type="text"
-              name="lat"
+              name="long"
               placeholder="00000"
               onChange={onChange}
               required
             />
 
             <TextField
-              label="Longitude"
+              label="Latitude"
               type="text"
-              name="long"
+              name="lat"
               placeholder="00000"
               onChange={onChange}
               required
