@@ -2,8 +2,8 @@ import ContractAbi from '../abi/EventWiseAbi.json';
 import ERCTokenAbi from '../abi/ERC20TokenAbi.json';
 import { parseEther } from 'ethers';
 
-const EVENTWISE_CONTRACT_ADDRESS = '0x6d7B7DE1f0114c11b8739b779d0C1dE5aF88f482';
-const TOKEN_CONTRACT_ADDRESS = '0xC8A71BACF28e24A274b95e785c436bb5F57043Ae';
+const EVENTWISE_CONTRACT_ADDRESS = '0xe433E96c77B524EB730705Cd609d7E09756822B5';
+const TOKEN_CONTRACT_ADDRESS = '0xABDb0E084eCf355Fda82332d2BcB13316952b97B';
 
 class EventWise {
   contract;
@@ -57,12 +57,13 @@ class EventWise {
   }
 
   async viewClaims() {
+
     let claims = [];
     let events = await this.contract.getPastEvents('ClaimInitiated', {
       fromBlock: 0,
       toBlock: 'latest'
     })
-    events = events.filter((e: any) => e.returnValues.user === this.fromAddress);
+    events = events.filter((e:any) => e.returnValues.user === this.fromAddress);
 
     for (const e of events) {
       let event = await this.contract.methods
@@ -72,6 +73,7 @@ class EventWise {
         .Claims(this.fromAddress, e.returnValues.eventId)
         .call();
       e.returnValues.status = claim.status == '0' ? 'pending' : 'claimed';
+      e.returnValues.name = event.name;
       e.returnValues.eventDate = event.date;
       e.returnValues.eventCost = event.cost;
       claims.push(e.returnValues);
