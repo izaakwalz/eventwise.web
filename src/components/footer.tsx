@@ -4,7 +4,10 @@ export default function Footer() {
   return (
     <footer className="flex w-full flex-col space-y-8 px-4 py-6 lg:px-[100px]">
       <div className="flex items-center justify-between">
-        <Link href={'/'} className="font-nico text-[1.5rem] underline-offset-4  hover:underline">
+        <Link
+          href={'/'}
+          className="font-nico text-[0.625rem] underline-offset-4 hover:underline  md:text-[1.5rem]"
+        >
           #chainlinkfallhackathon2023
         </Link>
 

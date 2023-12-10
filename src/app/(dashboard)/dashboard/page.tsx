@@ -30,7 +30,7 @@ export default function Page() {
   // console.log(events);
 
   return (
-    <section className="grid w-full grid-cols-4 gap-[18px]">
+    <section className="grid w-full grid-cols-1 gap-[18px] lg:grid-cols-4">
       {events && events.length === 0 ? (
         <p className="text-[1.125rem] font-medium">You don't have any registered event</p>
       ) : (

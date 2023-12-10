@@ -40,7 +40,7 @@ const initialData = {
   date: ''
 };
 
-const AddEventModalForm = () => {
+export const AddEventModalForm = () => {
   const router = useRouter();
   const [form, setForm] = useState(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);

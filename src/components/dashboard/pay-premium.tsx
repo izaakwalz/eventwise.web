@@ -36,7 +36,7 @@ export default function PayPremium({ premiumAmount }: any) {
   );
 }
 
-const PayPremiumModal = ({ premiumAmount }: { premiumAmount: any }) => {
+export const PayPremiumModal = ({ premiumAmount }: { premiumAmount: any }) => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);

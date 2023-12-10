@@ -1,9 +1,9 @@
 'use client';
 
 import DashboardNav from '@/components/dashboard/dashboard-nav';
-import AddEvent from '@/components/dashboard/add-event';
+import AddEvent, { AddEventModalForm } from '@/components/dashboard/add-event';
 import RequestClaim from '@/components/dashboard/request-claim';
-import PayPremium from '@/components/dashboard/pay-premium';
+import PayPremium, { PayPremiumModal } from '@/components/dashboard/pay-premium';
 import ContractProvider, { useContractContext } from '@/hooks/connect-wallet';
 import EventWise from '@/lib/EventWise';
 import { useRouter } from 'next/navigation';
@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <ContractProvider>
-      <section className="flex items-center gap-[18px] py-[100px]">
+      <section className="hidden items-center gap-[18px] py-[100px] lg:flex">
         <div className="flex w-[615px] items-center rounded-lg bg-[#EAEAEA] px-8 py-[52px]">
           <h1 className="text-[42px]/[62px] font-bold">
             Insure your event in a <span className="text-ews-200">smart way</span>
@@ -48,6 +48,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <AddEvent />
         <RequestClaim />
         <PayPremium premiumAmount={userPolicy?.premiumAmount} />
+      </section>
+
+      <section className="my-6 flex h-[170px] flex-col items-center gap-6 rounded-lg bg-[#EAEAEA] px-[26px] pb-[40px] pt-[26px] lg:hidden">
+        <h1 className="max-w-[210px] text-center text-[1.25rem] font-bold">
+          Insure your event in a <span className="text-ews-200">smart way</span>
+        </h1>
+
+        <div className="flex items-center gap-3">
+          <AddEventModalForm />
+          <PayPremiumModal premiumAmount={userPolicy?.premiumAmount} />
+        </div>
       </section>
 
       <DashboardNav />
