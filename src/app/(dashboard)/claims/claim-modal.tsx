@@ -53,7 +53,7 @@ export default function ClaimModal({ eventCost, eventId }: ClaimProps) {
         </DialogHeader>
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center justify-center gap-2 rounded-xl bg-white/[0.58] px-4 py-2 text-[18px]">
-            You will receive premium payment of ${formatNumber(formatEther(eventCost))}
+            You will receive a payment of ${formatNumber(formatEther(eventCost))} <br/>if the conditions of our insurance policy were met.
           </div>
 
           <div className="mt-4 flex items-center justify-center">

@@ -60,7 +60,7 @@ export default function Page() {
                   <div className="flex w-full flex-col items-start gap-2 rounded-lg border border-ews-300 bg-white px-[11px] py-2 text-[12px]">
                     <dl className="flex gap-[2px]">
                       <dt className="font-bold">Event:</dt>
-                      <dd>{claim.eventId}</dd>
+                      <dd>{claim.name}</dd>
                     </dl>
                     <dl className="flex gap-[2px]">
                       <dt className="font-bold">Date:</dt>
